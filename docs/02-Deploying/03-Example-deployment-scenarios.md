@@ -162,16 +162,15 @@ Migrations completed.
 Before we can run the server, we need to generate some TLS keying material. If you already have tooling for generating valid TLS certificates, then you are encouraged to use that instead. You will need a TLS certificate and key for running the Fleet server. If you'd like to generate self-signed certificates, you can do this via:
 
 ```
-openssl genrsa -out /tmp/server.key 4096
-openssl req -new -key /tmp/server.key -out /tmp/server.csr
-openssl x509 -req -days 366 -in /tmp/server.csr -signkey /tmp/server.key -out /tmp/server.cert
+openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
+  -keyout /tmp/server.key -out /tmp/server.cert -subj "/CN=SERVER_NAME" \
+  -addext "subjectAltName=DNS:SERVER_NAME"
 ```
 
-You should now have three new files in `/tmp`:
+You should now have two new files in `/tmp`:
 
 - `/tmp/server.cert`
 - `/tmp/server.key`
-- `/tmp/server.csr`
 
 Now we are ready to run the server! We do this via `fleet serve`:
 
